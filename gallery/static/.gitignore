@@ -1,0 +1,9 @@
+# https://www.howtogeek.com/devops/how-to-set-up-gitignore-as-a-whitelist/
+# Ignore everything
+*
+# But don't skip over the subdirectories just yet please thank you
+!*/
+
+# Then track this file and everything in the 'dist' directory
+!.gitignore
+!dist/

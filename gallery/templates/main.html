@@ -1,0 +1,291 @@
+<html>
+<head>
+    <title>{{ gallery_title }}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, height=device-height, user-scalable=no, initial-scale=1.0"/>
+    <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"></script>
+    <script>
+            const picList = [ //{% for i in pictures %}
+                "{{ year + '/' + month + '/' + i }}", //{% endfor %}
+            ];
+
+
+            // https://stackoverflow.com/a/5298684
+            function removeHash() {
+                var scrollV, scrollH, loc = window.location;
+                if ("pushState" in history)
+                    history.pushState("", document.title, loc.pathname + loc.search);
+                else {
+                    // Prevent scrolling by storing the page's current scroll offset
+                    scrollV = document.body.scrollTop;
+                    scrollH = document.body.scrollLeft;
+
+                    loc.hash = "";
+
+                    // Restore the scroll offset, should be flicker free
+                    document.body.scrollTop = scrollV;
+                    document.body.scrollLeft = scrollH;
+                }
+            }
+
+
+            function hashChanged(h) {
+                if (h == "#close") {
+                    $("div.modal").removeClass("active");
+                    removeHash();
+                } else {
+                    for (const i of picList) {
+                        if ('#' + i == h) {
+                            $("div.modal").addClass("active");
+                            $('div.modal-title').html(i);
+                            $('div.modal-content').html(`<img src="{{ url_for('flgallery.static', filename='') }}${i}" class="img-responsive modal-pic">`);
+                        }
+                    }
+                }
+            }
+
+
+            // https://stackoverflow.com/a/2162174
+            if ("onhashchange" in window) { // event supported?
+                window.onhashchange = function() {
+                    hashChanged(window.location.hash);
+                }
+            } else { // event not supported:
+                var storedHash = window.location.hash;
+                window.setInterval(function() {
+                    if (window.location.hash != storedHash) {
+                        storedHash = window.location.hash;
+                        hashChanged(storedHash);
+                    }
+                }, 100);
+            }
+
+
+            // https://www.tutorialrepublic.com/faq/how-to-change-href-attribute-of-a-hyperlink-using-jquery.php
+            $(document).ready(function() {
+                $('a[href^="{{ url_for('flgallery.static', filename='') }}"]').each(function() {
+                    var oldUrl = $(this).attr("href");
+                    var newUrl = oldUrl.replace("{{ url_for('flgallery.static', filename='') }}", "#");
+                    $(this).attr("href", newUrl);
+                });
+
+                hashChanged(window.location.hash);
+            });
+
+    </script>
+</head>
+<link rel="stylesheet" href="{{ url_for('flgallery.static', filename='dist/spectre.min.css') }}">
+<link rel="stylesheet" href="{{ url_for('flgallery.static', filename='dist/spectre-exp.min.css') }}">
+<link rel="stylesheet" href="{{ url_for('flgallery.static', filename='dist/spectre-icons.min.css') }}">
+<style>
+
+        body {
+          background: #000000;
+          margin: 3% auto;
+          color: #f2f2f2;
+          font-size: 16px;
+          /*text-shadow: 0 1px 0 #000000;*/
+          line-height: 1.8;
+          max-width: 55em;
+        }
+
+        @keyframes fade {
+          from {background: rgba(4,4,4,0);}
+          to {background: rgba(4,4,4,.75);}
+        }
+
+        .overlay {}
+
+        .modal.active .modal-overlay {
+          border-bottom: none;
+          background: rgba(4,4,4,.75);
+          animation-name: fade;
+          animation-duration: 0.5s;
+        }
+
+        .modal-body {
+          color: #444444;
+        }
+
+        .modal-container {
+          max-height: 101vh;
+        }
+
+        .modal-footer {
+          color: #444444;
+        }
+
+        .text-primary {
+          color: #32b643 !important;
+        }
+
+        .text-gray {
+          color: #5b5f67 !important;
+        }
+
+        a {
+          border-bottom: 1px solid #f2f2f2;
+          color: #f2f2f2;
+          text-decoration: none;
+        }
+
+        a:hover {
+          border-bottom: 0;
+        }
+
+        .card {
+          color: 444444;
+          width: 250px;
+          margin-right: 15px;
+          margin-bottom: 15px;
+        }
+
+        .btn {
+          border-color: #26A940;
+          color: #26A940;
+        }
+
+        .btn:focus,
+        .btn:hover {
+          background: #f1f1fc;
+          border-color: #26A940;
+        }
+
+        .btn.active,
+        .btn:active {
+          background: #32b643;
+          border-color: #26A940;
+        }
+
+        .btn.btn-primary {
+          background: #32b643;
+        }
+
+        .a-card {
+          border-bottom: none;
+          margin: 2pt;
+          background: #32b643;
+        }
+
+        .a-card.hover,
+        .a-card:hover {
+          background: #227263;
+        }
+
+        .form-select {
+          color: #000000;
+        }
+
+        .form-select.focus,
+        .form-select:focus {
+          border-color: #26A940;
+        }
+
+        .filter-item {
+          width:25%;
+        }
+
+        .modal-pic {
+          max-height: 51em;
+          margin: auto;
+        }
+
+
+</style>
+<header>
+</header>
+
+<!-- Body -->
+<body>
+<!-- Modal popup -->
+<div class="modal" id="modal-id">
+    <a href="#close" class="modal-overlay" aria-label="Close"></a>
+    <div class="modal-container">
+        <div class="modal-header">
+            <a href="#close" class="btn btn-clear float-right" aria-label="Close"></a>
+            <div class="modal-title h5">Modal title</div>
+        </div>
+        <div class="modal-body">
+            <div class="modal-content"> image goes here</div>
+        </div>
+        <div class="modal-footer">{{ modal_footer }}</div>
+    </div>
+</div>
+
+<!-- Actual site -->
+<h1 class="text-primary">{{ gallery_title }}</h1>
+{{ gallery_paragraph }}
+
+<!-- Filter bar -->
+<h2 class="text-primary">Filtrar</h2>
+<div style="display: flex;flex-flow: row wrap;flex-wrap: nowrap;align-items: flex-end;justify-content: flex-start;">
+    <div class="filter-item" style="display: flex;flex-flow: row wrap;margin: 0 1em;">
+        <label for="year-select">Ano</label>
+        <select id="year-select" class="form-select" disabled>
+            <option>---</option>
+            <option selected>2022</option>
+        </select>
+    </div>
+    <div class="filter-item" style="display: flex;flex-flow: row wrap;margin: 0 1em;">
+        <label for="month-select">Mês</label>
+        <select id="month-select" class="form-select" disabled>
+            {% for i in ('---', 'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto',
+            'Setembro', 'Outubro', 'Novembro', 'Dezembro') %}
+            {% set a = '' %}
+
+            {% if loop.index0 == month | int %}
+            {% set a = ' selected' %}
+            {% endif %}
+            <option
+            {{a}}>{{i}}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <button class="btn" style="margin: 0 1em;" disabled>Filtrar</button>
+</div>
+<br>
+
+<!-- Gallery -->
+<h2 class="text-primary">{{ month_name }}/{{ year }}</h2>
+
+<div style="display: flex;flex-flow: row wrap;flex-wrap: nowrap;align-items: flex-end;justify-content: space-between;">
+    <!-- TODO: This can be done better with a for loop -->
+    {% if prev_month == '00' %}
+    {% set prev_available = ' disabled' %}
+    {% else %}
+    {% set prev_available = ' href=' + url_for('flgallery.year_month', y=year, m=prev_month) %}
+    {% endif %}
+    <a class="btn" style="margin: 0 1em;" {{ prev_available }}>< Anterior</a>
+
+    {% if next_month == '00' %}
+    {% set next_available = ' disabled' %}
+    {% else %}
+    {% set next_available = ' href=' + url_for('flgallery.year_month', y=year, m=next_month) %}
+    {% endif %}
+    <a class="btn" style="margin: 0 1em;" {{ next_available }}>Proximo ></a>
+</div>
+
+<div style="display: flex; flex-flow: row wrap; justify-content: center;"> {% for i in pictures %}
+    <a class="a-card s-rounded" href="{{ url_for('flgallery.static', filename=year + '/' + month + '/' + i)}}">
+        <!-- do fstrings not work in jinja templates | f'{year}/{month}/{i}' -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-image">
+                         <!-- # TODO: Return a placeholder image when thumbnail isn't found -->
+                    <img class="img-responsive img-fit-cover"
+                         src="{{ url_for('flgallery.static', filename=year + '/' + month + '/t/' + i)}}"
+                         style="height: 10rem; width: 100%;">
+                </div>
+            </div>
+        </div>
+    </a> {% endfor %}
+</div>
+
+<div class="divider"></div>
+
+<!-- Footer -->
+<footer>
+    Page request received at {{ now_time }}.
+</footer>
+</body>
+</html>
