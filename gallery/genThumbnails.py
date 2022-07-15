@@ -42,7 +42,7 @@ if __name__ == '__main__':
     # TODO: Check for orphaned thumbnails and delete them
     print(f'INFO: The current working directory is "{Path.cwd()}".')
 
-    L = get_valid_dirs('.')
+    L = get_valid_dirs()
     # print(L)
 
     for i in L:
