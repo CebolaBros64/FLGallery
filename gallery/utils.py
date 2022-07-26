@@ -1,4 +1,10 @@
-from . import FLGallery
+try:
+    from . import FLGallery
+    sta_fo = FLGallery.static_folder
+except ImportError:
+    # Eww hacks :puke_emoji:
+    sta_fo = 'static'
+    pass
 from datetime import date
 from pathlib import Path
 
@@ -21,7 +27,7 @@ def get_valid_dirs():
     # TODO: This could be a tuple, could it not?
     _list = []
 
-    for child in Path(FLGallery.static_folder).glob('*/*/'):
+    for child in Path(sta_fo).glob('*/*/'):
         # Get all directories containing at least one file
         if child.is_dir() and len([x for x in child.iterdir() if x.is_file()]) != 0:
             p = child.parts  # Get tuple with all "parts" of the path
