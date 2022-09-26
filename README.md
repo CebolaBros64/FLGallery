@@ -7,6 +7,6 @@ Flask blueprint for a simple image gallery.
 - Be simple to set up
 
 ## Todo:
-- Add a `requirements.txt`
+~~- Add a `requirements.txt`~~
 - Add proper documentation
 - Everything else :)
