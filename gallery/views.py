@@ -1,5 +1,6 @@
 from . import FLGallery, utils
 from .templateGlobals import template_globals
+from .localization import strings
 
 import locale
 from datetime import datetime
@@ -77,4 +78,11 @@ def year_month(y, m):
 
 @FLGallery.context_processor
 def context():
-    return template_globals
+    # If LOCALE is not a key in strings
+    if LOCALE not in strings:
+        lang = "en_US"
+    else:
+        lang = LOCALE
+
+    # | operator merges the two dicts
+    return template_globals | strings[lang]

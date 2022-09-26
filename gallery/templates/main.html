@@ -226,7 +226,7 @@
     {% else %}
     {% set prev_available = ' href=' + url_for('flgallery.year_month', y=year, m=prev_month) %}
     {% endif %}
-    <a class="btn" style="margin: 0 1em;" {{ prev_available }}>< Anterior</a>
+    <a class="btn" style="margin: 0 1em;" {{ prev_available }}>< {{ str_prev }}</a>
 
     <h2 class="text-primary">{{ month_name }}/{{ year }}</h2>
 
@@ -235,7 +235,7 @@
     {% else %}
     {% set next_available = ' href=' + url_for('flgallery.year_month', y=year, m=next_month) %}
     {% endif %}
-    <a class="btn" style="margin: 0 1em;" {{ next_available }}>Proximo ></a>
+    <a class="btn" style="margin: 0 1em;" {{ next_available }}>{{ str_next }} ></a>
 </div>
 
 <div style="display: flex; flex-flow: row wrap; justify-content: center;"> {% for i in pictures %}
