@@ -216,14 +216,10 @@
 <!-- Actual site -->
 <div style="background: #1f2c2b;border: 3px solid #263837;padding: 6px;">
 <h1 class="text-primary">{{ gallery_title }}</h1>
-{{ gallery_paragraph | safe }}
-
-<br>
+<p>{{ gallery_paragraph | safe }}</p>
 
 <!-- Gallery -->
-<h2 class="text-primary">{{ month_name }}/{{ year }}</h2>
-
-<div style="display: flex;flex-flow: row wrap;flex-wrap: nowrap;align-items: flex-end;justify-content: space-between;">
+<div style="display: flex;flex-flow: row wrap;flex-wrap: nowrap;align-items: baseline;justify-content: space-between;">
     <!-- TODO: This can be done better with a for loop -->
     {% if prev_month == '00' %}
     {% set prev_available = ' disabled' %}
@@ -231,6 +227,8 @@
     {% set prev_available = ' href=' + url_for('flgallery.year_month', y=year, m=prev_month) %}
     {% endif %}
     <a class="btn" style="margin: 0 1em;" {{ prev_available }}>< Anterior</a>
+
+    <h2 class="text-primary">{{ month_name }}/{{ year }}</h2>
 
     {% if next_month == '00' %}
     {% set next_available = ' disabled' %}

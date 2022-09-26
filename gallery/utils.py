@@ -4,7 +4,6 @@ try:
 except ImportError:
     # Eww hacks :puke_emoji:
     sta_fo = 'static'
-    pass
 from datetime import date
 from pathlib import Path
 
@@ -24,7 +23,6 @@ def get_pics(year, month):
 
 
 def get_valid_dirs():
-    # TODO: This could be a tuple, could it not?
     _list = []
 
     for child in Path(sta_fo).glob('*/*/'):
